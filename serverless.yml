@@ -1,0 +1,28 @@
+service: campo-harmonico
+
+provider:
+  name: aws
+  runtime: ruby2.5
+  region: us-east-1
+
+package:
+  exclude:
+    - .git
+    - .gitignore
+
+functions:
+  HarmonicField:
+    handler: harmonic_field.process
+
+    events:
+      - http:
+          path: harmonic_fields
+          method: post
+
+  Cipher:
+    handler: cipher.process
+
+    events:
+      - http:
+          path: cipher
+          method: post
