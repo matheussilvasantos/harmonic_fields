@@ -1,10 +1,41 @@
 require 'json'
 require_relative 'array'
+require 'httparty'
+require 'nokogiri'
+
+ALLOWED_INTENTS = ["acorde", "cifra"]
 
 def process(event:, context:)
-  @acordes ||= Hash.new {|h,k| h[k] = [] }
   params = JSON.parse(event["body"])
   puts "[LOGGER] #{params}"
+  intent = params["queryResult"]["intent"]["displayName"]
+  send(intent, params)
+end
+
+def cifra(params)
+  song = params["queryResult"]["parameters"]["song"]
+  response = HTTParty.get("https://www.google.com/search?q=#{song}+cifra")
+  doc = Nokogiri::HTML(response)
+  link = doc.css("#search a:first-of-type").first["href"].match(/http.*/).to_s
+  {
+    headers: {
+      "Access-Control-Allow-Origin": "*"
+    },
+    statusCode: 200,
+    body: JSON.generate({
+      followupEventInput: {
+        name: "cifra-found",
+        languageCode: "pt-BR",
+        parameters: {
+          "cifra" => link
+        }
+      }
+    })
+  }
+end
+
+def acorde(params)
+  @acordes ||= Hash.new {|h,k| h[k] = [] }
   session = params["session"]
   acorde = params["queryResult"]["parameters"]["acorde"]
   @acordes[session].push(acorde)
@@ -21,7 +52,6 @@ def process(event:, context:)
     },
     statusCode: 200,
     body: JSON.generate({
-      fulfillmentText: "teste",
       followupEventInput: {
         name: event_name,
         languageCode: "pt-BR",

@@ -18,11 +18,3 @@ functions:
       - http:
           path: harmonic_fields
           method: post
-
-  Cipher:
-    handler: cipher.process
-
-    events:
-      - http:
-          path: cipher
-          method: post
