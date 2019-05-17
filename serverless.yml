@@ -18,3 +18,23 @@ functions:
       - http:
           path: harmonic_fields
           method: post
+
+resources:
+  Resources:
+    HarmonicFields:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: harmonic_fields
+        AttributeDefinitions:
+          - AttributeName: name
+            AttributeType: S
+          - AttributeName: chord
+            AttributeType: S
+        KeySchema:
+          - AttributeName: name
+            KeyType: HASH
+          - AttributeName: chord
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
