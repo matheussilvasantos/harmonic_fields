@@ -26,14 +26,14 @@ resources:
       Properties:
         TableName: harmonic_fields
         AttributeDefinitions:
-          - AttributeName: name
-            AttributeType: S
           - AttributeName: chord
+            AttributeType: S
+          - AttributeName: name
             AttributeType: S
         KeySchema:
-          - AttributeName: name
-            KeyType: HASH
           - AttributeName: chord
+            KeyType: HASH
+          - AttributeName: name
             KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
