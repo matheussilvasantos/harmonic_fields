@@ -2,6 +2,7 @@ require 'json'
 require_relative 'array'
 require 'httparty'
 require 'nokogiri'
+require 'aws-sdk-dynamodb'
 
 ALLOWED_INTENTS = ["acorde", "cifra"]
 
@@ -65,10 +66,18 @@ end
 
 def search_acorde_in_harmonic_field(acordes)
   table = Aws::DynamoDB::Table.new("harmonic_fields")
-  options = { key_condition_expression: "chord = :chord", expression_attribute_values: { ":chord" => acorde } }
-  table.query(options).items
-  HARMONIC_FIELD.map do |harmonic_field|
-    puts "[LOGGER] #{(harmonic_field[:acordes] & acordes)}"
-    harmonic_field[:name] if (acordes - harmonic_field[:acordes]).empty?
-  end.compact
+
+  campos = acordes.map do |acorde|
+    options = { key_condition_expression: "chord = :chord", expression_attribute_values: { ":chord" => acorde } }
+    items = table.query(options).items
+    items.map { |item| item[:name] }
+  end
+
+  result = campo.shift
+
+  campos.each do |campo|
+    result &= campo
+  end
+
+  result
 end
