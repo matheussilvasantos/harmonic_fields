@@ -70,10 +70,10 @@ def search_acorde_in_harmonic_field(acordes)
   campos = acordes.map do |acorde|
     options = { key_condition_expression: "chord = :chord", expression_attribute_values: { ":chord" => acorde } }
     items = table.query(options).items
-    items.map { |item| item[:name] }
+    items.map { |item| item["name"] }
   end
 
-  result = campo.shift
+  result = campos.shift
 
   campos.each do |campo|
     result &= campo
