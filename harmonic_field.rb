@@ -1,23 +1,29 @@
 require 'json'
-require_relative 'array'
 require 'httparty'
 require 'nokogiri'
 require 'aws-sdk-dynamodb'
+
+require_relative 'array'
 
 ALLOWED_INTENTS = ["acorde", "cifra"]
 
 def process(event:, context:)
   params = JSON.parse(event["body"])
+
   puts "[LOGGER] #{params}"
+
   intent = params["queryResult"]["intent"]["displayName"]
   send(intent, params)
 end
 
 def cifra(params)
   song = params["queryResult"]["parameters"]["song"]
+
   response = HTTParty.get("https://www.google.com/search?q=#{song}+cifra")
+
   doc = Nokogiri::HTML(response)
   link = doc.css("#search a:first-of-type").first["href"].match(/http.*/).to_s
+
   {
     headers: {
       "Access-Control-Allow-Origin": "*"
@@ -36,16 +42,24 @@ def cifra(params)
 end
 
 def acorde(params)
-  @acordes ||= Hash.new {|h,k| h[k] = [] }
-  session = params["session"]
-  acorde = params["queryResult"]["parameters"]["acorde"]
-  @acordes[session].push(acorde)
-  harmonic_field_found = search_acorde_in_harmonic_field(@acordes[session])
-  event_name = "campo-harmonico-found"
+  table = Aws::DynamoDB::Table.new("chords_by_sessions")
+  options = {} # TODO: Add options Hash
+  chords = table.query(options).items.map { |item| item["chord"] }
+
+  new_chord = params["queryResult"]["parameters"]["acorde"]
+  chords.push(new_chord)
+
+  harmonic_field_found = search_acorde_in_harmonic_field(chords)
+
+  event_name = ""
   if harmonic_field_found.size <= 1
     event_name = "campo-harmonico-completely-found"
-    @acordes[session] = []
+    # TODO: Remove chords from the session
+  else
+    event_name = "campo-harmonico-found"
+    # TODO: Add new chord to the session
   end
+
   puts "[LOGGER] #{harmonic_field_found}"
   {
     headers: {
@@ -73,11 +87,8 @@ def search_acorde_in_harmonic_field(acordes)
     items.map { |item| item["name"] }
   end
 
-  result = campos.shift
-
-  campos.each do |campo|
-    result &= campo
+  {}.tap do |result|
+    result = campos.shift
+    campos.each { |campo| result &= campo }
   end
-
-  result
 end
