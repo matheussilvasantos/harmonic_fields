@@ -8,7 +8,13 @@ provider:
     - Effect: Allow
       Action:
         - dynamodb:Query
-      Resource: arn:aws:dynamodb:*:*:table/${self:custom.tableName}
+      Resource: arn:aws:dynamodb:*:*:table/${self:custom.harmonicFieldsTableName}
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:DeleteItem
+      Resource: arn:aws:dynamodb:*:*:table/${self:custom.chordsBySessionTableName}
 
 package:
   exclude:
@@ -17,7 +23,7 @@ package:
 
 functions:
   HarmonicField:
-    handler: harmonic_field.process
+    handler: handler.process
 
     events:
       - http:
@@ -29,7 +35,7 @@ resources:
     HarmonicFields:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.tableName}
+        TableName: ${self:custom.harmonicFieldsTableName}
         AttributeDefinitions:
           - AttributeName: chord
             AttributeType: S
@@ -43,9 +49,23 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+    ChordsBySession:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.chordsBySessionTableName}
+        AttributeDefinitions:
+          - AttributeName: session
+            AttributeType: S
+        KeySchema:
+          - AttributeName: session
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
 
 custom:
-  tableName: harmonic_fields
+  harmonicFieldsTableName: harmonic_fields
+  chordsBySessionTableName: chords_by_session
   dynamodb:
     start:
       migrate: true
