@@ -23,7 +23,7 @@ class Chord
       delete_chords_from_session
     else
       event_name = "campo-harmonico-found"
-      add_new_chord_to_session
+      update_session_chords(chords)
     end
 
     puts "[LOGGER] #{harmonic_field_found}"
@@ -64,12 +64,12 @@ class Chord
   def delete_chords_from_session
     table = Aws::DynamoDB::Table.new("chords_by_session")
     options = { key: { "session" => @session } }
-    table.delete_item(options)["chords"]
+    table.delete_item(options)
   end
 
-  def add_new_chord_to_session
+  def update_session_chords(chords)
     table = Aws::DynamoDB::Table.new("chords_by_session")
-    options = { key: { "session" => @session }, attribute_updates: { "chords" => { value: @new_chord, action: "ADD" } } }
-    table.delete_item(options)["chords"]
+    options = { key: { "session" => @session }, attribute_updates: { "chords" => { value: chords, action: "PUT" } } }
+    table.update_item(options)
   end
 end
