@@ -57,10 +57,9 @@ class Chord
       items.map { |item| item["name"] }
     end
 
-    [].tap do |result|
-      result = campos.shift
-      campos.each { |campo| result &= campo }
-    end
+    result = campos.shift
+    campos.each { |campo| result &= campo }
+    result
   end
 
   def delete_chords_from_session
