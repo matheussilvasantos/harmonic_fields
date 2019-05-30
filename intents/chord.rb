@@ -57,7 +57,7 @@ class Chord
       items.map { |item| item["name"] }
     end
 
-    {}.tap do |result|
+    [].tap do |result|
       result = campos.shift
       campos.each { |campo| result &= campo }
     end
