@@ -11,7 +11,7 @@ class Chord
   end
 
   def process
-    chords = get_chords_from_session
+    chords = get_chords_from_session || []
 
     chords.push(@new_chord)
 
