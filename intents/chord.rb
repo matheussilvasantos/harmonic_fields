@@ -43,7 +43,9 @@ class Chord
   def get_chords_from_session
     table = Aws::DynamoDB::Table.new("chords_by_session")
     options = { key: { "session" => @session } }
-    table.get_item(options)["chords"]
+    if item = table.get_item(options).item
+      item["chords"]
+    end
   end
 
   def search_acorde_in_harmonic_field(acordes)
