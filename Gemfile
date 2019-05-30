@@ -4,3 +4,4 @@ source "https://rubygems.org"
 
 gem "nokogiri"
 gem "httparty"
+gem "aws-sdk-dynamodb"
