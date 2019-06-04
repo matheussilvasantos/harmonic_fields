@@ -63,7 +63,7 @@ class Chord
   end
 
   def get_harmonic_field_name(item)
-    return item["name"] if item["relative_to"]
+    return item["name"] unless item["relative_to"]
     "#{item["name"]} e pode ser relativo ao #{item["relative_to"]}"
   end
 
