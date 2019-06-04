@@ -54,12 +54,17 @@ class Chord
     campos = acordes.map do |acorde|
       options = { key_condition_expression: "chord = :chord", expression_attribute_values: { ":chord" => acorde } }
       items = table.query(options).items
-      items.map { |item| item["name"] }
+      items.map { |item| get_harmonic_field_name(item) }
     end
 
     result = campos.shift
     campos.each { |campo| result &= campo }
     result
+  end
+
+  def get_harmonic_field_name(item)
+    return item["name"] if item["relative_to"].empty?
+    "#{item["name"]} e pode ser relativo ao #{item["relative_to"]}"
   end
 
   def delete_chords_from_session
