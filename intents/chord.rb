@@ -17,25 +17,18 @@ class Chord
 
     harmonic_field_found = search_acorde_in_harmonic_field(chords)
 
-    event_name = ""
+    fulfillment_text = ""
     if harmonic_field_found.size <= 1
-      event_name = "campo-harmonico-completely-found"
+      fulfillment_text = "Show! Sua música está no #{harmonic_field_found.to_sentence}."
       delete_chords_from_session
     else
-      event_name = "campo-harmonico-found"
+      fulfillment_text = "Legal, o acorde pode estar no #{harmonic_field_found.to_sentence}. Fale-me outro acorde da mesma música."
       update_session_chords(chords)
     end
 
     puts "[LOGGER] #{harmonic_field_found}"
-    {
-      followupEventInput: {
-        name: event_name,
-        languageCode: "pt-BR",
-        parameters: {
-          "campo-harmonico" => harmonic_field_found.to_sentence
-        }
-      }
-    }
+
+    { fulfillmentText: fulfillment_text }
   end
 
   private
