@@ -22,19 +22,11 @@ class Cipher
 
   FIRST_LINK_SELECTOR = "#search a:first-of-type"
   def get_first_link_from_google(html)
-    doc = Nokogiri::HTML(response)
+    doc = Nokogiri::HTML(html)
     link = doc.css(FIRST_LINK_SELECTOR).first["href"].match(/http.*/).to_s
   end
 
-  def build_response
-    {
-      followupEventInput: {
-        name: "cifra-found",
-        languageCode: "pt-BR",
-        parameters: {
-          "cifra" => link
-        }
-      }
-    }
+  def build_response(link)
+    { fulfillmentText: "Você pode acessar a cifra em: #{link}" }
   end
 end
