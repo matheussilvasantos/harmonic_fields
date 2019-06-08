@@ -19,7 +19,11 @@ class Chord
 
     fulfillment_text = ""
     if harmonic_field_found.size <= 1
-      fulfillment_text = "Show! Sua música está no #{harmonic_field_found.to_sentence}."
+      if harmonic_field_found.size == 1
+        fulfillment_text = "Show! Sua música está no #{harmonic_field_found.to_sentence}."
+      else
+        fulfillment_text = "Não conseguimos encontrar um campo harmônico com esses acordes."
+      end
       delete_chords_from_session
     else
       fulfillment_text = "Legal, o acorde pode estar no #{harmonic_field_found.to_sentence}. Fale-me outro acorde da mesma música."
