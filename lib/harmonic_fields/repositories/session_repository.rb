@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "aws-sdk-dynamodb"
+
 module HarmonicFields
   module Repositories
 

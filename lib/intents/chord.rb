@@ -3,15 +3,18 @@
 require "core_ext/array"
 
 require "harmonic_fields/entities/session_entity"
+require "harmonic_fields/entities/harmonic_field_entity"
 require "harmonic_fields/repositories/session_repository"
-
-require "aws-sdk-dynamodb"
+require "harmonic_fields/repositories/harmonic_field_repository"
 
 class Chord
   def initialize(params)
     @new_chord = params["queryResult"]["parameters"]["acorde"]
+
     @session_entity = HarmonicFields::Entities::SessionEntity.new(id: params["session"])
     @session_repository = HarmonicFields::Repositories::SessionRepository.new(session: session_entity)
+
+    @harmonic_field_repository = HarmonicFields::Repositories::HarmonicFieldRepository.new
   end
 
   def process
@@ -41,24 +44,15 @@ class Chord
 
   private
 
-  attr_reader :session_entity, :session_repository
+  attr_reader :session_entity, :session_repository, :harmonic_field_repository
 
-  def search_acorde_in_harmonic_field(acordes)
-    table = Aws::DynamoDB::Table.new("harmonic_fields")
-
-    campos = acordes.map do |acorde|
-      options = { key_condition_expression: "chord = :chord", expression_attribute_values: { ":chord" => acorde } }
-      items = table.query(options).items
-      items.map { |item| get_harmonic_field_name(item) }
+  def search_acorde_in_harmonic_field(chords)
+    campos = chords.map do |chord|
+      harmonic_field_repository.find_by_chord(chord).map(&:name)
     end
 
     result = campos.shift
     campos.each { |campo| result &= campo }
     result
-  end
-
-  def get_harmonic_field_name(item)
-    return item["name"] unless item["relative_to"]
-    "#{item["name"]} e pode ser relativo ao #{item["relative_to"]}"
   end
 end
