@@ -14,14 +14,18 @@ module HarmonicFields
 
       def find_by_chord(chord)
         options = {
-          :key_condition_expression => "chord = :chord",
+          :key_condition_expression    => "chord = :chord",
           :expression_attribute_values => {
-            ":chord" => chord
+            ":chord" => chord.name
           }
         }
 
         table.query(options).items.map do |item|
-          Entities::HarmonicFieldEntity.new(name: item["name"], chord: item["chord"], relative_to: item["relative_to"])
+          Entities::HarmonicFieldEntity.new(
+            name: item["name"],
+            chord: item["chord"],
+            relative_to: item["relative_to"]
+          )
         end
       end
 
