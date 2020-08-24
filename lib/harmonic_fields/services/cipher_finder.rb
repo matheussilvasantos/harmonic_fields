@@ -28,6 +28,7 @@ module HarmonicFields
       end
 
       FIRST_LINK_SELECTOR = "div[data-async-context^='query'] a:first-of-type"
+      private_constant :FIRST_LINK_SELECTOR
       def get_first_link_from_google(html)
         doc = Nokogiri::HTML(html)
         link = doc.css(FIRST_LINK_SELECTOR).first["href"].match(/http.*/).to_s

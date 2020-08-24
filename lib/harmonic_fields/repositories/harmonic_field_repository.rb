@@ -9,7 +9,7 @@ module HarmonicFields
 
     class HarmonicFieldRepository
       def initialize
-        @table = Aws::DynamoDB::Table.new("harmonic_fields")
+        @table = Aws::DynamoDB::Table.new(TABLE_NAME)
       end
 
       def find_by_chord(chord)
@@ -32,6 +32,9 @@ module HarmonicFields
       private
 
       attr_reader :table
+
+      TABLE_NAME = "harmonic_fields"
+      private_constant :TABLE_NAME
     end
 
   end

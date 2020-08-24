@@ -1,5 +1,4 @@
 require "harmonic_fields/repositories/harmonic_field_repository"
-require "harmonic_fields/entities/harmonic_field_entity"
 require "harmonic_fields/value_objects/chord"
 
 RSpec.describe HarmonicFields::Repositories::HarmonicFieldRepository do

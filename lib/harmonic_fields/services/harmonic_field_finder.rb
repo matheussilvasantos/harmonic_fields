@@ -2,8 +2,6 @@
 
 require "core_ext/array"
 
-require "harmonic_fields/entities/session_entity"
-require "harmonic_fields/entities/harmonic_field_entity"
 require "harmonic_fields/repositories/session_repository"
 require "harmonic_fields/repositories/harmonic_field_repository"
 
