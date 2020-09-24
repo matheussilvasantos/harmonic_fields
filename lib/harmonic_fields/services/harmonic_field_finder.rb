@@ -30,7 +30,7 @@ module HarmonicFields
           if harmonic_field_found.size == 1
             message = "Show! Sua música está no #{harmonic_field_found.to_sentence}."
           else
-            message = "Não conseguimos encontrar um campo harmônico com esses acordes."
+            message = "Não conseguimos encontrar um campo harmônico com esses acordes. Faça-me outro desejo meu amo."
           end
           session_repository.delete_chords
         else
